@@ -2,17 +2,8 @@ package com.parkchanwoo.videorecordingdemo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,12 +13,9 @@ import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -37,11 +25,7 @@ import android.widget.ToggleButton;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -49,17 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
 	private static final String TAG = "Log_MainActivity";
 	private static final int REQUEST_CODE = 1000;
-	private int mScreenDensity;
+	private static final int REQUEST_PERMISSIONS = 10;
+
 	private MediaProjectionManager mProjectionManager;
-	private static final int DISPLAY_WIDTH = 720;
-	private static final int DISPLAY_HEIGHT = 1280;
 	private MediaProjection mMediaProjection;
 	private VirtualDisplay mVirtualDisplay;
 	private MediaProjectionCallback mMediaProjectionCallback;
 	private ToggleButton mToggleButton;
 	private MediaRecorder mMediaRecorder;
 	private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-	private static final int REQUEST_PERMISSIONS = 10;
 
 	static {
 		ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -73,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		mScreenDensity = metrics.densityDpi;
 		mMediaRecorder = new MediaRecorder();
 		mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 		mToggleButton = findViewById(R.id.toggle);
@@ -167,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private VirtualDisplay createVirtualDisplay() {
 		return mMediaProjection.createVirtualDisplay("MainActivity",
-				DISPLAY_WIDTH, DISPLAY_HEIGHT, mScreenDensity,
+				DisplayUtils.getScreenWidthPixels(this), DisplayUtils.getScreenHeightPixels(this), DisplayUtils.getScreenDensity(this),
 				DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
 				mMediaRecorder.getSurface(), null /*Callbacks*/, null
 				/*Handler*/);
@@ -180,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 			mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 			mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 			mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-			mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+			mMediaRecorder.setVideoSize(DisplayUtils.getScreenWidthPixels(this), DisplayUtils.getScreenHeightPixels(this));
 			mMediaRecorder.setVideoFrameRate(30);
 
 //			OutputStream fos;

@@ -196,14 +196,13 @@ public class MainActivity extends AppCompatActivity {
 			mMediaRecorder.setOutputFile(Environment.getExternalStorageDirectory() + "/video.mp4");
 			Log.d(TAG, "initRecorder 2 setOutputFile() done");
 
-			mMediaRecorder.setVideoEncodingBitRate(512 * 1000);
+			mMediaRecorder.setVideoEncodingBitRate(512 * 10000);
 			int rotation = getWindowManager().getDefaultDisplay().getRotation();
 			int orientation = ORIENTATIONS.get(rotation + 90);
-			Log.d(TAG, "initRecorder 3");
 			mMediaRecorder.setOrientationHint(orientation);
-			Log.d(TAG, "initRecorder 4 calling prepare()");
+			Log.d(TAG, "initRecorder 3 calling prepare()");
 			mMediaRecorder.prepare();
-			Log.d(TAG, "initRecorder 5 prepare() done");
+			Log.d(TAG, "initRecorder 4 prepare() done");
 		} catch (IOException e) {
 			Log.e(TAG, "initRecorder IOException!");
 			e.printStackTrace();

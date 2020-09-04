@@ -10,11 +10,9 @@ import android.content.Intent;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 public class RecordingService extends Service {
 	private static final String TAG = "RecordingService";
@@ -26,21 +24,6 @@ public class RecordingService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//			// create notification channel
-//			new NotificationManager(this,11111);
-//			// Create notification builder.
-//			Intent notificationIntent = new Intent();
-//			PendingIntent pendingIntent = PendingIntent.getService(context, 1212, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//			NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NotificationManager.CHANNEL_ID);
-//			builder.setSmallIcon(R.drawable.notification);
-//			builder.setColor(ContextCompat.getColor(this, R.color.white));
-//			builder.setContentTitle(getString(title));
-//			builder.setContentIntent(pendingIntent);
-//			Notification notification = builder.build();
-//			startForeground(100000, notification);
-//			Log.d(TAG,"Start foreground service");
-//		}
 		startInForeground();
 	}
 

@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity {
 	private static final int REQUEST_CODE = 1000;
 	private static final int REQUEST_PERMISSIONS = 10;
 
+	private MediaRecorder mMediaRecorder;
 	private MediaProjectionManager mProjectionManager;
 	private MediaProjection mMediaProjection;
 	private VirtualDisplay mVirtualDisplay;
 	private MediaProjectionCallback mMediaProjectionCallback;
 	private ToggleButton mToggleButton;
-	private MediaRecorder mMediaRecorder;
 	private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
 	static {
@@ -61,33 +61,6 @@ public class MainActivity extends AppCompatActivity {
 		mToggleButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				/*
-				if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-					Log.e(TAG, "permissions not granted yet;");
-					if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECORD_AUDIO)) {
-						Log.e(TAG, "showing permission rationale");
-						mToggleButton.setChecked(false);
-						Snackbar.make(findViewById(android.R.id.content), R.string.label_permissions, Snackbar.LENGTH_INDEFINITE)
-								.setAction("ENABLE", new View.OnClickListener() {
-									@Override
-									public void onClick(View v) {
-										ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, REQUEST_PERMISSIONS);
-									}
-								}).show();
-						Log.e(TAG, "showing snackbar");
-					}
-					else {
-						Log.e(TAG, "requesting permissions");
-						ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, REQUEST_PERMISSIONS);
-					}
-				}
-				else {
-					Log.e(TAG, "all permissions granted; toggling screen record");
-
-					onToggleScreenShare(v);
-				}
-				*/
-
 				String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
 				if (EasyPermissions.hasPermissions(MainActivity.this, perms)) {
 					// Already have permission, do the thing
@@ -161,48 +134,12 @@ public class MainActivity extends AppCompatActivity {
 			mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 			mMediaRecorder.setVideoSize(DisplayUtils.getScreenWidthPixels(this), DisplayUtils.getScreenHeightPixels(this));
 			mMediaRecorder.setVideoFrameRate(30);
-
-//			OutputStream fos;
-//			Uri videoUri;
-//
-//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//				ContentResolver resolver = getContentResolver();
-//				ContentValues contentValues = new ContentValues();
-//				contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, "video.mp4"); // set file name
-//				contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-//				contentValues.put(MediaStore.Video.Media.RELATIVE_PATH, Environment.DIRECTORY_MOVIES);
-//
-//				videoUri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
-//				fos = resolver.openOutputStream(Objects.requireNonNull(videoUri));
-//			}
-//			else { // below Android Q
-//				String videoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).toString();
-//				File video = new File(videoDir, "video.mp4");
-//				videoUri = Uri.fromFile(video);
-//				fos = new FileOutputStream(video);
-//			}
-//			mMediaRecorder.setOutputFile(videoUri.getPath());
-
-//
-//			if (fos != null)
-//				fos.close();
-
-//			File videoFile = new File(Environment.getExternalStorageDirectory() + "/video.mp4");
-//			if (!videoFile.exists()) {
-//				videoFile.mkdirs();
-//				videoFile.createNewFile();
-//			}
-			Log.d(TAG, "initRecorder 1 setOutputFile()");
 			mMediaRecorder.setOutputFile(Environment.getExternalStorageDirectory() + "/video.mp4");
-			Log.d(TAG, "initRecorder 2 setOutputFile() done");
-
 			mMediaRecorder.setVideoEncodingBitRate(512 * 10000);
 			int rotation = getWindowManager().getDefaultDisplay().getRotation();
 			int orientation = ORIENTATIONS.get(rotation + 90);
 			mMediaRecorder.setOrientationHint(orientation);
-			Log.d(TAG, "initRecorder 3 calling prepare()");
 			mMediaRecorder.prepare();
-			Log.d(TAG, "initRecorder 4 prepare() done");
 		} catch (IOException e) {
 			Log.e(TAG, "initRecorder IOException!");
 			e.printStackTrace();

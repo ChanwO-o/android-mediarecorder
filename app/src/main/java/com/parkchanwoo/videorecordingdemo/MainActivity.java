@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		});
-		startService(new Intent(MainActivity.this, RecordingService.class));
 	}
 
 	@Override
@@ -89,10 +88,12 @@ public class MainActivity extends AppCompatActivity {
 			mToggleButton.setChecked(false);
 			return;
 		}
+
 		mMediaProjectionCallback = new MediaProjectionCallback();
 		mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
 		mMediaProjection.registerCallback(mMediaProjectionCallback, null);
 		mVirtualDisplay = createVirtualDisplay();
+		Log.d(TAG, "onActivityResult() starting MediaRecorder");
 		mMediaRecorder.start();
 	}
 
@@ -101,19 +102,21 @@ public class MainActivity extends AppCompatActivity {
 			initRecorder();
 			shareScreen();
 		} else {
+			Log.i(TAG, "Stopping Recording");
 			mMediaRecorder.stop();
 			mMediaRecorder.reset();
-			Log.i(TAG, "Stopping Recording");
 			stopScreenSharing();
 		}
 	}
 
 	private void shareScreen() {
+		startService(new Intent(MainActivity.this, RecordingService.class));
 		if (mMediaProjection == null) {
 			startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
 			return;
 		}
 		mVirtualDisplay = createVirtualDisplay();
+		Log.d(TAG, "shareScreen() starting MediaRecorder");
 		mMediaRecorder.start();
 	}
 
@@ -167,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
 		mVirtualDisplay.release();
 		//mMediaRecorder.release(); //If used: mMediaRecorder object cannot be reused again
 		destroyMediaProjection();
+		Intent serviceIntent = new Intent(this, RecordingService.class);
+		stopService(serviceIntent);
 	}
 
 	@Override
